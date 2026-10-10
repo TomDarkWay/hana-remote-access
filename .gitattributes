@@ -10,3 +10,8 @@
 *.html text eol=lf
 *.md text eol=lf
 *.txt text eol=lf
+
+# 仓库自有文件不属于应用内容，导出打包时剔除
+/.gitattributes export-ignore
+/.github/ export-ignore
+/.gitlab-ci.yml export-ignore
