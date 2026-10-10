@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Hana 远程访问</title>
+  <link rel="stylesheet" href="./assets/settings.css">
+</head>
+<body>
+  <main id="app">
+    <header>
+      <h1>远程访问</h1>
+      <p id="status-line" role="status">正在读取状态…</p>
+    </header>
+
+    <section>
+      <h2>1 · 配置</h2>
+      <div class="grid">
+        <label>公网地址<input id="publicBaseUrl" placeholder="https://your-ddns:8444" autocomplete="off"></label>
+        <label>网关端口<input id="port" type="number" min="1024" max="65535"></label>
+        <label>监听地址<input id="listen" autocomplete="off"></label>
+        <label>HanaAgent 端口<input id="upstreamPort" type="number" min="1" max="65535"></label>
+        <label class="wide">允许的 Host / 内网地址<input id="trustedHosts" placeholder="nas.example.com,192.168.1.10" autocomplete="off"></label>
+        <label>扫码落地页
+          <select id="landingSurface">
+            <option value="pad">pad（浏览器版，当前可用）</option>
+            <option value="mobile">mobile（宿主移动端界面）</option>
+            <option value="auto">auto（按设备分流）</option>
+          </select>
+        </label>
+        <label>配对钥匙权限
+          <select id="pairScopeProfile">
+            <option value="full">full（桌面权限）</option>
+            <option value="auto">auto（按设备收窄）</option>
+          </select>
+        </label>
+        <label>名册上限<input id="maxDevices" type="number" min="1" max="32"></label>
+        <label>名册与日志目录<input id="dataDir" placeholder="留空则用本应用数据目录" autocomplete="off"></label>
+        <label class="check"><input id="logRequests" type="checkbox"><span>记录请求日志</span></label>
+        <label class="check"><input id="enabled" type="checkbox"><span>启用远程访问网关</span></label>
+      </div>
+      <p class="hint">改完点「保存并重载」。HanaAgent 需处于「允许局域网设备」模式；NAS 反向代理把公网端口指向这里的网关端口。</p>
+      <div class="row">
+        <button id="save" class="primary">保存并重载</button>
+        <button id="start">启动网关</button>
+        <button id="stop">停止网关</button>
+        <span id="save-msg" role="status"></span>
+      </div>
+    </section>
+
+    <section>
+      <h2>2 · 配对</h2>
+      <div class="row">
+        <button id="issue" class="primary">生成配对二维码</button>
+        <button id="refresh">换一个令牌</button>
+        <span id="ttl" role="status"></span>
+      </div>
+      <div id="qr-wrap" class="qr-wrap"></div>
+      <label>配对链接（手机浏览器直接打开也行）<input id="pair-link" readonly></label>
+      <label>令牌（在「输入配对令牌」页面使用）<input id="pair-token" readonly></label>
+      <div class="row"><button id="copy-link">复制链接</button><button id="copy-token">复制令牌</button></div>
+    </section>
+
+    <section>
+      <h2>3 · 已配对设备</h2>
+      <ul id="roster" class="roster"></ul>
+      <button id="cancel-token">作废当前二维码</button>
+      <div class="row"><button id="unpair-all" class="danger">全部解除配对</button></div>
+      <p class="hint">「全部解除」会同时吊销宿主侧的设备凭证，需要重新扫码才能连回来。</p>
+    </section>
+
+    <section>
+      <h2>4 · 自检</h2>
+      <div class="row"><button id="doctor">运行体检</button></div>
+      <ul id="doctor-list" class="checks"></ul>
+    </section>
+
+    <section>
+      <h2>5 · 运行日志</h2>
+      <div class="row"><button id="logs">刷新日志</button></div>
+      <pre id="log-box" class="log"></pre>
+    </section>
+  </main>
+  <script>window.addEventListener('error', () => { const n = document.getElementById('status-line'); if (n) n.textContent = '应用启动失败：' + (event.message || '未知错误') }, true)</script>
+  <script src="./assets/qr.js"></script>
+  <script type="module" src="./assets/settings.js"></script>
+</body>
+</html>

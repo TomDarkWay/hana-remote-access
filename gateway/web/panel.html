@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>远程访问 · HanaAgent</title>
+<style>
+  :root { color-scheme: dark; }
+  * { box-sizing: border-box; }
+  body { margin:0; padding:24px 16px 48px; background:#14100e; color:#f2e9e1;
+         font:15px/1.65 system-ui,-apple-system,"Segoe UI","Microsoft YaHei",sans-serif; }
+  .wrap { max-width:520px; margin:0 auto; }
+  h1 { font-size:20px; margin:0 0 4px; }
+  .sub { color:#a89689; font-size:13px; margin:0 0 18px; }
+  .card { background:#1d1815; border:1px solid #3a2f28; border-radius:14px; padding:16px; margin:0 0 14px; }
+  .row { display:flex; align-items:center; justify-content:space-between; gap:10px; }
+  h2 { font-size:15px; margin:0; }
+  .badges { display:flex; gap:12px; font-size:12px; color:#a89689; align-items:center; }
+  .dot { display:inline-block; width:7px; height:7px; border-radius:50%; background:#8a7a6d; margin-right:5px; vertical-align:1px; }
+  .dot.on { background:#5fc27e; }
+  .dot.warn { background:#e8a33d; }
+  .qrbox { display:flex; justify-content:center; padding:14px 0 6px; }
+  .qrbox svg, .qrbox img { width:230px; height:230px; background:#fff; border-radius:10px; padding:8px; }
+  .count { text-align:center; color:#a89689; font-size:12px; margin-top:6px; }
+  .label { font-size:13px; color:#c9b8a8; margin:14px 0 6px; }
+  .field { display:flex; gap:8px; align-items:stretch; }
+  input[type=text] { flex:1; min-width:0; background:#120f0d; border:1px solid #4a3c33; color:#f2e9e1;
+                     border-radius:9px; padding:9px 10px; font:13px ui-monospace,Consolas,monospace; }
+  button { background:#2a221d; color:#f2e9e1; border:1px solid #4a3c33; border-radius:9px;
+           padding:9px 13px; font:inherit; font-size:13px; cursor:pointer; white-space:nowrap; }
+  button:hover { border-color:#e8a33d; color:#e8a33d; }
+  button.primary { background:#e8a33d; border-color:#e8a33d; color:#1a1310; font-weight:600; }
+  button.danger { background:transparent; border-color:#7d3b32; color:#e0897c; }
+  .hint { color:#a89689; font-size:12px; margin-top:10px; }
+  .nets label { display:flex; gap:9px; align-items:center; padding:7px 0; font-size:13px; cursor:pointer; }
+  .nets code { color:#a89689; font-size:12px; }
+  .actions { display:flex; gap:10px; margin-top:6px; }
+  ul.dev { list-style:none; margin:8px 0 0; padding:0; }
+  ul.dev li { display:flex; align-items:center; justify-content:space-between; gap:10px;
+              padding:9px 0; border-top:1px solid #2e2620; font-size:13px; }
+  ul.dev li:first-child { border-top:0; }
+  .empty { color:#a89689; font-size:13px; }
+  .meta { color:#8a7a6d; font-size:12px; }
+  .toast { position:fixed; left:50%; bottom:26px; transform:translateX(-50%); background:#2a221d;
+           border:1px solid #e8a33d; color:#f2e9e1; border-radius:10px; padding:8px 14px; font-size:13px;
+           opacity:0; transition:opacity .18s; pointer-events:none; }
+  .toast.show { opacity:1; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>远程访问</h1>
+  <p class="sub">通过手机或另一台电脑配对，远程使用同一份 HanaAgent 界面（官方移动端 / Pad 端）</p>
+
+  <div class="card">
+    <div class="row">
+      <h2>设备配对</h2>
+      <div class="badges">
+        <span id="mode-badge"><i class="dot"></i>未配置公网</span>
+        <span id="state-badge"><i class="dot"></i>等待设备连接</span>
+      </div>
+    </div>
+    <div class="qrbox" id="qr"><span class="empty">生成中…</span></div>
+    <div class="count" id="count"></div>
+
+    <div class="label">公网链接：设备无需与本机处于同一网络</div>
+    <div class="field">
+      <input type="text" id="link" readonly placeholder="配对链接">
+      <button id="copy-link">复制链接</button>
+    </div>
+    <div class="field" style="margin-top:8px">
+      <input type="text" id="token" readonly placeholder="配对令牌">
+      <button id="copy-token">复制令牌</button>
+    </div>
+    <p class="hint">链接含限时令牌：在令牌过期或刷新二维码之前，同一链接可为多台设备完成配对（每次配对各自生成独立设备会话）。无法打开链接时，可只复制令牌并在设备的 <code>/pair</code> 页面输入。</p>
+
+    <div class="label">选择二维码指向的网络</div>
+    <div class="nets" id="nets"></div>
+
+    <div class="actions">
+      <button class="primary" id="refresh">刷新二维码</button>
+      <button class="danger" id="stop">停止</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>已授权设备</h2>
+    <ul class="dev" id="devices"><li class="empty">还没有已配对的设备。扫码或打开链接后会出现在这里。</li></ul>
+  </div>
+
+  <p class="hint">面板仅本机可访问。网关状态：<span id="health" class="meta">检测中…</span></p>
+</div>
+<div class="toast" id="toast"></div>
+<script src="/qr.js"></script>
+<script src="/panel.js"></script>
+</body>
+</html>

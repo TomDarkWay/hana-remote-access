@@ -1,0 +1,25 @@
+Hana 远程访问 (hana-remote-access)
+Copyright 2026 TomDarkWay
+
+This product includes software developed elsewhere, whose notices are retained below
+and in the source files themselves.
+
+1. Pairing engine design and roster semantics
+   Source: dsh-remote-web-ui (Apache License 2.0)
+   Files:  gateway/pairing.mjs (see the header comment), parts of gateway/gw.mjs
+   Reimplemented compactly against plain Node; the Apache-2.0 attribution is kept in
+   the file headers.
+
+2. QR Code Generator for JavaScript 1.4.4
+   Copyright (c) 2009 Kazuhiko Arase
+   License: MIT
+   Files:  ui/assets/qr.js, gateway/web/qr.js (header comments retained)
+
+3. Application SDK bundled under sdk/
+   Provided by the HanaAgent (Hanako) offline SDK for extension authors, redistributed
+   verbatim. Its own dependency notices — including React 19.2.4 (MIT) and
+   @ant-design/* (MIT) — are in sdk/THIRD_PARTY_NOTICES.txt (1887 lines) and apply to
+   that directory in full.
+
+The remaining sources of this application are licensed under the Apache License 2.0
+(see LICENSE).

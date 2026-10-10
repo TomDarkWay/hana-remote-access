@@ -1,0 +1,110 @@
+{
+  "manifestVersion": 2,
+  "id": "hana-remote-access",
+  "name": "Hana 远程访问",
+  "version": "1.0.1",
+  "license": "Apache-2.0",
+  "entry": "index.js",
+  "icon": "assets/icon.svg",
+  "description": "把这台 HanaAgent 通过公网反向代理安全地开放给手机和另一台电脑：在设置弹窗里配置地址、启停网关、生成配对二维码、管理已配对设备，不需要另开一个面板网页。",
+  "minAppVersion": "1.0.6-beta",
+  "capabilities": [
+    "app/runtime.execute",
+    "app/runtime.local-machine",
+    "app/runtime.network"
+  ],
+  "contributes": {
+    "settings": {
+      "title": "远程访问",
+      "ui": {
+        "route": "/settings.html"
+      },
+      "schema": {
+        "properties": {
+          "enabled": {
+            "type": "boolean",
+            "title": "启用远程访问网关",
+            "default": true
+          },
+          "publicBaseUrl": {
+            "type": "string",
+            "title": "公网地址",
+            "default": "",
+            "description": "形如 https://你的域名或DDNS:端口，二维码与配对链接由它生成"
+          },
+          "listen": {
+            "type": "string",
+            "title": "监听地址",
+            "default": "0.0.0.0"
+          },
+          "port": {
+            "type": "integer",
+            "title": "网关端口",
+            "default": 19388
+          },
+          "upstreamPort": {
+            "type": "integer",
+            "title": "HanaAgent 端口",
+            "default": 31787
+          },
+          "trustedHosts": {
+            "type": "string",
+            "title": "允许的 Host / 内网地址",
+            "default": "",
+            "description": "逗号分隔，例如 nas.example.com,192.168.1.10"
+          },
+          "pairScopeProfile": {
+            "type": "string",
+            "title": "配对钥匙权限",
+            "default": "full",
+            "enum": [
+              "full",
+              "auto"
+            ],
+            "description": "full=一律按桌面权限铸钥匙；auto=按设备类型收窄"
+          },
+          "landingSurface": {
+            "type": "string",
+            "title": "扫码落地页",
+            "default": "pad",
+            "enum": [
+              "pad",
+              "mobile",
+              "auto"
+            ],
+            "description": "pad=浏览器/手机可用；mobile=宿主移动端界面；auto=按设备分流"
+          },
+          "maxDevices": {
+            "type": "integer",
+            "title": "名册上限",
+            "default": 4
+          },
+          "dataDir": {
+            "type": "string",
+            "title": "名册与日志目录",
+            "default": "",
+            "description": "留空则用本应用的数据目录；填现有网关目录可沿用已配对设备"
+          },
+          "logRequests": {
+            "type": "boolean",
+            "title": "记录请求日志",
+            "default": true
+          }
+        }
+      }
+    },
+    "cards": [
+      {
+        "id": "remote-access",
+        "title": "远程访问",
+        "description": "远程访问网关的控制台：启停、配对二维码、已配对设备与运行日志。",
+        "route": "/settings.html",
+        "realization": "page",
+        "fpFullPanel": true,
+        "face": {
+          "image": "assets/cover.svg"
+        }
+      }
+    ]
+  }
+}
