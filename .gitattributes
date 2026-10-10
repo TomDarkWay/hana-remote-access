@@ -1,0 +1,12 @@
+# 这个仓库的产物用 SHA-256 登记发布，任何行尾转换都会让「从克隆重打包」得不到同一个 zip。
+* -text
+*.png binary
+*.jpg binary
+*.svg text eol=lf
+*.js text eol=lf
+*.mjs text eol=lf
+*.json text eol=lf
+*.css text eol=lf
+*.html text eol=lf
+*.md text eol=lf
+*.txt text eol=lf
